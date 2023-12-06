@@ -38,7 +38,6 @@ pub fn runProblem(file: []const u8) !i64 {
 	var margin: i64 = 1;
 
 	for (times.items, distances.items) |total_time, distance_record| {
-		std.debug.print("{}", .{total_time});
 		var beat_count: i64 = 0;
 		for (0..@intCast(total_time)) |htl| {
 			const hold_time: i64 = @intCast(htl);
@@ -49,6 +48,7 @@ pub fn runProblem(file: []const u8) !i64 {
 				beat_count += 1;
 			}
 		}
+		//std.debug.print("{}", .{beat_count});
 		margin *= beat_count;
 	}
 
@@ -87,12 +87,11 @@ const Reader = struct {
 		}
 		var sum: i64 = 0;
 
-		while (self.b.len > 0 and ((self.b[0] >= '0' and self.b[0] <= '9') or self.b[0] == ' ')) {
-			if (self.b[0] != ' ') {///////////////////////////////////////////////////////////////// "kerning" hack
-				sum *= 10;
-				sum += @as(i64, self.b[0] - '0');
-			}
+		while (self.b.len > 0 and self.b[0] >= '0' and self.b[0] <= '9') {
+			sum *= 10;
+			sum += @as(i64, self.b[0] - '0');
 			self.b = self.b[1..];
+			self.trimSpaces(); // Lol easy hack to fix the "bad kerning".
 		}
 
 		return sum;
