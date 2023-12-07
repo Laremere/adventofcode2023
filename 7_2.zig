@@ -36,17 +36,12 @@ pub fn runProblem(file: []const u8) !i64 {
 		try lr.mustEof();
 
 		var doubles: u8 = 0;
-		var tripples: u8 = 0;
+		// var tripples: u8 = 0;
 
 		for (0..bytes.len) |i| {
 			for (i+1..bytes.len) |j| {
 				if (bytes[i] == bytes[j]) {
 					doubles += 1;
-					for (j+1..bytes.len) |k| {
-						if (bytes[i] == bytes[k]) {
-							tripples += 1;
-						}
-					}
 				}
 			}
 		}
@@ -78,13 +73,13 @@ pub fn runProblem(file: []const u8) !i64 {
 			}
 			break :blk Ranks.four_of_a_kind;
 
-		} else if (tripples == 1 and doubles == 1 + 3) blk: {
+		} else if (doubles == 1 + 3) blk: {
 			if (j_count > 1) {
 				break :blk Ranks.five_of_a_kind; // wildcards match other match, becoming 5.
 			}
 			break :blk Ranks.full_house;
 
-		} else if (tripples == 1) blk: {
+		} else if (doubles == 3) blk: {
 			if (j_count > 0) {
 				break :blk Ranks.four_of_a_kind;
 			}
@@ -105,9 +100,6 @@ pub fn runProblem(file: []const u8) !i64 {
 			break :blk Ranks.pair;
 
 		} else blk: { // high card
-			if (doubles != 0 or tripples != 0) {
-				@panic("Hand scoring logic error");
-			}
 			if (j_count > 0) {
 				break :blk Ranks.pair;
 			}
@@ -147,7 +139,6 @@ pub fn runProblem(file: []const u8) !i64 {
 
 	for (hands.items, 1..) |hand, multiplier| {
 		result += hand.bid * @as(i64, @intCast(multiplier));
-		// std.debug.print("{}, {}\n", .{hand.bid, multiplier});
 	}
 
 	return result;
