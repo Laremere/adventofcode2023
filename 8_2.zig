@@ -4,14 +4,19 @@ var gpa_raw = std.heap.GeneralPurposeAllocator(.{}){};
 var gpa = gpa_raw.allocator();
 
 pub fn main() !void {
-    var timer = try std.time.Timer.start();
-    std.debug.print("example result {d}\n", .{try runProblem("examples/8_2.txt")});
-    const example_time = timer.read();
-    std.debug.print("run time: {d}.{d}ms\n", .{ example_time / 1_000_000, example_time % 1_000_000 });
-    timer.reset();
-    std.debug.print("actual result {d}\n", .{try runProblem("input/8_1.txt")});
-    const actual_time = timer.read();
-    std.debug.print("run time: {d}.{d}ms\n", .{ actual_time / 1_000_000, actual_time % 1_000_000 });
+	const filenames = [_][]const u8 {
+		"examples/8_2.txt",
+		"input/8_1.txt",
+	};
+
+    for (filenames) |filename| {
+    	var r = try FileReader.from_file(filename);
+    	var timer = try std.time.Timer.start();
+    	const result = try runProblem(&r);
+    	const finish_time = timer.read();
+	    std.debug.print("{s} result {d}\n", .{filename, result});
+	    std.debug.print("run time: {d}.{d}ms\n\n", .{ finish_time / 1_000_000, finish_time % 1_000_000 });
+    }
 }
 
 pub fn index(bytes: [3]u8) u16 {
@@ -30,9 +35,7 @@ fn indexName(i: u16) [3]u8{
 	};
 }
 
-pub fn runProblem(file: []const u8) !i64 {
-	var r = try FileReader.from_file(file);
-
+pub fn runProblem(r: *FileReader) !i64 {
 	var rights = std.ArrayList(u1).init(gpa);
 	defer rights.deinit();
 
