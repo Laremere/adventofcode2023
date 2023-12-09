@@ -25,6 +25,8 @@ pub fn runProblem(r: *FileReader) !i64 {
 		var lr = try r.lineReader();
 		var difs = std.ArrayList(i64).init(gpa);
 		defer difs.deinit();
+		var firsts = std.ArrayList(i64).init(gpa);
+		defer firsts.deinit();
 
 		while (!lr.eof()) {
 			var next = try lr.i();
@@ -34,10 +36,18 @@ pub fn runProblem(r: *FileReader) !i64 {
 				next = next_next;
 			}
 			try difs.append(next);
+			try firsts.append(next);
 		}
 
-		for (difs.items) |dif| {
-			sum += dif;
+		{
+			var sub: i64 = 0;
+			var i: i64 = @as(i64, @intCast(firsts.items.len)) - 1;
+			while (i >= 0) {
+				sub = firsts.items[@intCast(i)] - sub;
+
+				i -= 1;
+			}
+			sum += sub;
 		}
 	}
 
