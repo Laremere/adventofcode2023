@@ -20,13 +20,17 @@ pub fn main() !void {
 }
 
 pub fn runProblem(r: *FileReader) !i64 {
+	var difs = std.ArrayList(i64).init(gpa);
+	defer difs.deinit();
+	var firsts = std.ArrayList(i64).init(gpa);
+	defer firsts.deinit();
+
 	var sum: i64 = 0;
 	while (!r.eof()) {
+		difs.clearRetainingCapacity();
+		firsts.clearRetainingCapacity();
+
 		var lr = try r.lineReader();
-		var difs = std.ArrayList(i64).init(gpa);
-		defer difs.deinit();
-		var firsts = std.ArrayList(i64).init(gpa);
-		defer firsts.deinit();
 
 		while (!lr.eof()) {
 			var next = try lr.i();
